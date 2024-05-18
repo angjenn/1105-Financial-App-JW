@@ -7,11 +7,15 @@
 
 <div class="container">
 
-<h2>Please enter the exchange rate SGD to USD (eg 1.35) </h2>
 
-<form action="/dbs_price" method="post">
-      <p><input type="number" step= "0.01" name="q" ></p>
-      <p><input type="submit" value="Enter"></p>
+<h2>Reply : {{r}} </h2>
+
+<form action="/main" method="post">
+      <p><input type="submit" value="Main"></p>
+</form>   
+
+<form action="/end" method="post">
+  <p><input type="submit" value="End"></p>
 </form>   
 
 </div>
