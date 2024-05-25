@@ -2,13 +2,17 @@ from flask import Flask, render_template, request
 import google.generativeai as palm
 import replicate
 import os
+import sqlite3
+import datetime
+import pytz #to add timezone
+from flask import Markup #so that can pull the log
 
 flag = 1  #flag variable - Most frequently, a flag is employed as a while loop condition. 
 name = ""
-
-makersuite_api =os.getenv("MAKERSUITE_API_TOKEN")
-palm.configure(api_key = makersuite_api)
-
+makersuite_api=os.getenv("MAKERSUITE_API_TOKEN")
+palm.configure(api_key=makersuite_api)
+#"AIzaSyDwj5p73l7diKdHC2cLTbv5Haz5KYo4skc"(MAKERSUITE API)
+#os.environ["REPLICATE_API_TOKEN"]= "r8_SfyswKHfVsBlq22fXaAiNDatDYiAWTk2l4JaN"
 
 model =  {"model" : "models/chat-bison-001"}
 app = Flask(__name__)
@@ -24,6 +28,14 @@ def main():
     global flag , name #need global
     if flag ==1: #flag variable is to let the the main pull the name once. The loop would continue while the flag’s value was True and end if it became False.
         name = request.form.get("q")
+        time_zone= pytz.timezone("Singapore")
+        current_time = datetime.datetime.now(time_zone)
+        conn = sqlite3.connect("log.db")
+        c = conn.cursor()
+        c.execute("insert into user (name,time) values (?,?)", (name,current_time))
+        conn.commit()
+        c.close()
+        conn.close()
         flag = 0
     return(render_template("main.html", r=name))#get the r value same to the template
 
@@ -63,6 +75,32 @@ def image_result():
     r = replicate.run("stability-ai/stable-diffusion:db21e45d3f7023abc2a46ee38a23973f6dce16bb082a930b0c49861f96d1e5bf",
                   input = {"prompt":q})
     return(render_template("image_result.html", r=r[0]))
+
+
+@app.route("/log",methods=["GET","POST"])#log.db
+def log():
+    conn = sqlite3.connect("log.db")
+    c = conn.cursor()
+    c.execute("select * from user")
+    r = ""
+    for row in c:
+      r += str(row) + "<br>" #need change from "/n" to <br>
+    print(r)
+    r = Markup(r)
+    c.close()
+    conn.close()
+    return(render_template("log.html", r=r))
+
+@app.route("/delete",methods=["GET","POST"])#delete log records
+def delete():
+    conn = sqlite3.connect("log.db")
+    c = conn.cursor()
+    c.execute("delete from user")
+    conn.commit()
+    c.close()
+    conn.close()
+    return(render_template("delete.html"))
+
 
 
 #need to end to terminate the loop
