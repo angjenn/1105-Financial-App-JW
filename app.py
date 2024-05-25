@@ -71,7 +71,7 @@ def generate_image():
 @app.route("/image_result",methods=["GET","POST"])#reply
 def image_result():
     q= request.form.get("q")
-    r = replicate.run("stability-ai/stable-diffusion:db21e45d3f7023abc2a46ee38a23973f6dce16bb082a930b0c49861f96d1e5bf",
+    r = replicate.run("stability-ai/stable-diffusion:ac732df83cea7fff18b8472768c88ad041fa750ff7682a21affe81863cbe77e4",
                   input = {"prompt":q})
     return(render_template("image_result.html", r=r[0]))
 
