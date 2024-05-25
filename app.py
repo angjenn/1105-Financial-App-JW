@@ -11,8 +11,7 @@ flag = 1  #flag variable - Most frequently, a flag is employed as a while loop c
 name = ""
 makersuite_api=os.getenv("MAKERSUITE_API_TOKEN")
 palm.configure(api_key=makersuite_api)
-#"AIzaSyDwj5p73l7diKdHC2cLTbv5Haz5KYo4skc"(MAKERSUITE API)
-#os.environ["REPLICATE_API_TOKEN"]= "r8_SfyswKHfVsBlq22fXaAiNDatDYiAWTk2l4JaN"
+
 
 model =  {"model" : "models/chat-bison-001"}
 app = Flask(__name__)
